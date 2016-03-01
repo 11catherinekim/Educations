@@ -1,0 +1,382 @@
+@model Datalus.Web.Models.ViewModels.EducationsViewModel
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<head>
+    <link href="~/Content/ProfileStyleSheet.css" rel="stylesheet" />
+</head>
+
+
+<div class="row" data-ng-controller="createEducationsController as dashboard">
+    <form id="educationsForm" role="form" name="dashboard.educationsForm" ng-submit="dashboard.createEducation()" novalidate>
+        <fieldset ng-disabled="dashboard.disableForm">
+
+            <div class="panel" data-fill-color="true">
+
+                <div class="datalusTopLogo">
+                    <p class="text-center p-4x">
+                        <img type="image/png" src="https://datalus-img.s3-us-west-2.amazonaws.com/Datalus_Logo.png" height="75">
+                    </p>
+                    <p class="text-center lead">Create/Edit Educational History</p>
+                </div>
+
+                <div class=" col-md-6">
+                    <div class="col-md-12" style="padding-top:30px;">
+                        <div class="form-group">
+                            <a ng-href="/profiles/{{dashboard.userProfileId}}/edit" id="cmdCancel" class="btn btn-default"><span ng-bind="dashboard.cancelButtonName"></span>Return to Profile</a>
+                        </div>
+
+                        <div class="form-group has-feedback">
+                            <label for="inputSelect">StartDate</label>
+                            <div class="input-group input-group-in">
+                                <span class="input-group-addon"><i class="fa fa-calendar-o"></i></span>
+                                <input type="date"
+                                       class="form-control ng-class:{'error': dashboard.showFormErrors && !dashboard.educationsForm.StartDate.$valid}"
+                                       name="StartDate"
+                                       id="StartDate"
+                                       placeholder=""
+                                       data-ng-model="dashboard.education.StartDate"
+                                       required>
+
+                            </div>
+                            <div role="alert" class="help-inline error">
+                                <span class="error" ng-show="dashboard.showFormErrors && dashboard.educationsForm.StartDate.$error.required">Start Date is required</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group has-feedback">
+                            <label for="inputSelect">EndDate</label>
+                            <div class="input-group input-group-in">
+                                <span class="input-group-addon"><i class="fa fa-calendar-o"></i></span>
+                                <input type="date"
+                                       class="form-control ng-class:{'error': dashboard.showFormErrors && !dashboard.educationsForm.EndDate.$valid}"
+                                       name="Graduation Date"
+                                       id="EndDate"
+                                       placeholder=""
+                                       data-ng-model="dashboard.education.EndDate"
+                                       required>
+
+                            </div>
+                            <div role="alert" class="help-inline error">
+                                <span class="error" ng-show="dashboard.showFormErrors && dashboard.educationsForm.EndDate.$error.required">End Date is required</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group has-feedback">
+                            <label for="inputSelect">School Name</label>
+                            <div class="input-group input-group-in">
+                                <span class="input-group-addon"><i class="icon-tag"></i></span>
+                                <input type="text"
+                                       name="SchoolName"
+                                       id="SchoolName"
+                                       class="form-control"
+                                       placeholder="School Name"
+                                       data-ng-model="dashboard.education.schoolName"
+                                       required>
+
+                            </div>
+                            <div role="alert" class="help-inline error">
+                                <span class="error" ng-show="dashboard.showFormErrors && dashboard.educationsForm.SchoolName.$error.required">SchoolName is required</span>
+                            </div>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <label for="inputSelect">Major</label>
+                            <div class="input-group input-group-in">
+                                <span class="input-group-addon"><i class="icon-tag"></i></span>
+                                <input type="text"
+                                       name="Major"
+                                       id="Major"
+                                       class="form-control"
+                                       placeholder="Major "
+                                       data-ng-model="dashboard.education.major"
+                                       required>
+
+                            </div>
+                            <div role="alert" class="help-inline error">
+                                <span class="error" ng-show="dashboard.showFormErrors && dashboard.educationsForm.Major.$error.required">Major is required</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group has-feedback">
+                            <label for="inputSelect">Degree</label>
+                            <div class="input-group input-group-in">
+                                <span class="input-group-addon"><i class="icon-tag"></i></span>
+                                <input type="text"
+                                       name="Degree"
+                                       id="Degree"
+                                       class="form-control"
+                                       placeholder="Degree "
+                                       data-ng-model="dashboard.education.degree"
+                                       required>
+                            </div>
+                            <div role="alert" class="help-inline error">
+                                <span class="error" ng-show="dashboard.showFormErrors && dashboard.educationsForm.Degree.$error.required">Degree is required</span>
+                            </div>
+                        </div>
+
+                        <div class="pull-right mb-1x" id="formButtons">
+                            <button type="submit" id="createEducationButton" class="btn btn-primary"><span ng-bind="dashboard.submitButtonName">Submit</span></button>
+                            <button type="button" id="cmdDelete" class="btn btn-danger" ng-class="createController.deleteButtonClass" ng-click="createController.openModal()">Delete</button>
+                            <button type="reset" id="cmdReset" class="btn btn-info" ng-click="dashboard.resetForm()" ng-class="dashboard.resetFormButton">Reset Form</button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div><!-- /.form-group -->
+            <div class="alert " id="msgWindow"></div>
+        </fieldset>
+    </form>
+</div>
+
+<script type="text/ng-template" id="deleteEducationModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Are you sure?</h3>
+    </div>
+    <div class="modal-body">
+        <p>Confirm Delete</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" ng-click="modalCon.cancelDelete()" class="btn btn-default" id="cmdDeleteCancel">Cancel</button>
+        <button type="button" ng-click="modalCon.confirmDelete()" class="btn btn-primary" id="cmdDeleteConfirm">Delete</button>
+    </div>
+</script>
+
+<style type="text/css">
+    .accordionBar {
+        background-color: azure;
+        height: 40px;
+    }
+
+    .panel-heading {
+        padding: 0px;
+    }
+
+    .btn-icon.btn-default {
+        background-color: #819ac9;
+    }
+</style>
+
+
+@section pageInitScripts
+{
+    <script src="~/Scripts/ng/ckeditor/angular-ckeditor.js"></script>
+    <script type="text/javascript">
+        datalus.extraNgDependencies = ["ckeditor", "ui.bootstrap"]
+    </script>
+
+}
+
+@section Scripts {
+    <script src="//cdn.ckeditor.com/4.5.6/full/ckeditor.js"></script>
+
+    <script src="~/Scripts/datalus.services.educations.js"></script>
+    <script src="/Wrapkit/scripts/moment.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.validate.js"></script>
+    <script type="text/javascript"> datalus.page.educationId = @Model.Id; </script>
+    <script type="text/javascript">datalus.page.userProfileId = @Model.UserProfileId;</script>
+    <script type="text/javascript">
+
+        (function () {
+            "use strict";
+
+            angular.module(APPNAME)
+                .factory('$educationsService', EducationsServiceFactory);
+
+            EducationsServiceFactory.$inject = ['$baseService', '$datalus'];
+
+            function EducationsServiceFactory($baseService, $datalus) {
+                var educationsServiceObject = datalus.services.educations;
+                var newService = $baseService.merge(true, {}, educationsServiceObject, $baseService);
+                console.log(educationsServiceObject);
+                return newService;
+            }
+        })();
+
+        (function () {
+            "use strict";
+
+            angular.module(APPNAME)
+                .controller('createEducationsController', CreateEducationsController);
+            angular.module(APPNAME)
+            .requires.push('ckeditor');
+
+            CreateEducationsController.$inject = ['$scope', '$baseController', "$educationsService"];
+
+            function CreateEducationsController($scope, $baseController, $educationsService) {
+
+                var vm = this;
+                $baseController.merge(vm, $baseController);
+                vm.notify = vm.$educationsService.getNotifier($scope);
+
+                vm.headingInfo = "Educations";
+                vm.educationsForm = null;
+                vm.$educationsService = $educationsService;
+                vm.education = null;
+                vm.$scope = $scope;
+                vm.showFormErrors = false;
+                vm.disableForm = false;
+                vm.submitButtonName = "Submit";
+                vm.userProfileId = vm.$datalus.userProfileId;
+
+
+                vm.onError = _onError;
+                vm.onCreateSuccess = _onCreateSuccess;
+                //vm.onEditSuccess = _onEditSuccess;
+                vm.onGetByIdSuccess = _onGetByIdSuccess;
+                //vm.onUpdateSuccess = _onUpdateSuccess;
+                vm.deleteSuccess = _deleteSuccess;
+
+                vm.ckeditorOptions = {
+                    language: 'em',
+                    allowedContent: true,
+                    entities: false
+                };
+
+
+
+                vm.createEducation = _createEducation;
+                vm.deleteEducation = _deleteEducation;
+                vm.editEducationPage = _editEducationPage;
+                vm.resetForm = _resetForm;
+
+                render();
+
+                function render() {
+                    if (datalus.page.educationId || datalus.page.userProfileId> 0){
+                        vm.$educationsService.getEducationById(datalus.page.educationId, vm.onGetByIdSuccess, vm.onError);
+                    }
+                }
+
+                function _createEducation(){
+                    vm.showFormErrors = true;
+                    if (vm.educationsForm.$valid) {
+                        vm.education.userProfileId = vm.$datalus.userProfileId;
+
+                        if (datalus.page.educationId == 0)
+                        {
+                            console.log("data is valid! go save this object -> ", vm.education)
+                            vm.$educationsService.createNewEducation(vm.education, vm.onCreateSuccess, vm.onError)
+
+                        }
+                        else{
+                            vm.$educationsService.updateEducation(datalus.page.educationId, vm.education, vm.onUpdateSuccess, vm.onError)
+                        }
+                    }
+                    else {
+                        console.log("form submitted with invalid data")
+                    }
+                }
+
+                function _deleteEducation(){
+                    vm.$educationsService.onDeleteEducation(datalus.page.educationId, vm.deleteSuccess, vm.onError)
+                    vm.$alertService.success("Delete was Successful");
+
+                }
+
+
+                function _editEducationPage(){
+                    vm.educationTitle = "Edit Education";
+                    vm.submitButtonName = "Submit Changes";
+                    vm.cancelButtonName = "Cancel Changes";
+                    vm.deleteEducationButton = true;
+                    vm.resetButtonClass = "Reset";
+                }
+
+                function _resetForm(){
+                    vm.submitButtonName = "Submit"
+                    vm.educationsForm.$setPristine();
+                    vm.educationsForm.$setUntouched();
+                    vm.$alertService.info("Form reset");
+                }
+
+                function _onCreateSuccess(data, status, xhr){
+                    vm.notify(function () {
+                        vm.$log.log('post success... ' + data);
+                        vm.$alertService.success("Create was Successful");
+                        datalus.page.educationId = data.item;
+                        vm.education.id = data.item;
+                        vm.editEducationPage();
+                    });
+                }
+
+
+                function _onGetByIdSuccess(data) {
+                    vm.notify(function(){
+                        vm.education = data.item;
+                    });
+                    console.log(data.item);
+                    vm.submitButtonName = "Submit Changes";
+                    vm.cancelButtonName = "Cancel Changes";
+                }
+
+                function _deleteSuccess(){
+                    vm.$alertService.success("Education Deleted");
+                    vm.educationsForm.$setPristine();
+                    vm.educationsForm.$setUntouched();
+                    vm.disableForm = true;
+                }
+
+                function _deleteSuccess(data, status, xhr) {
+                    vm.$log.log('delete success... ' + data);
+                    vm.disableForm = true;
+                    vm.$alertService.success("Record Deleted");
+                }
+
+                function _onError(jqXHR, textStatus, errorThrown) {
+                    vm.notify(function(){
+                        vm.$alertService.info("An Error Occurred")
+                    })
+                }
+
+                function _openModal() {
+                    var modalInstance = vm.$uibModal.open({
+                        animation: true,
+                        templateUrl: 'deleteEducationModal.html',
+                        controller: 'deleteModalController as modalCon',
+                        size: 'sm',
+                    });
+
+                    modalInstance.result.then(function () {
+                        vm.deleteOfficeHour();
+                    });
+                }
+
+            }
+
+        })();
+
+        //Modal controller
+        (function () {
+            "use strict";
+
+            angular.module(APPNAME)
+                .controller('deleteModalController', DeleteModalController);
+
+            DeleteModalController.$inject = ['$scope', '$baseController', '$uibModalInstance']
+
+            function DeleteModalController($scope, $baseController, $uibModalInstance) {
+                var vm = this;
+
+                $baseController.merge(vm, $baseController);
+
+                vm.$scope = $scope;
+                vm.$uibModalInstance = $uibModalInstance;
+
+                vm.confirmDelete = function () {
+                    vm.$uibModalInstance.close();
+                };
+
+                vm.cancelDelete = function () {
+                    vm.$uibModalInstance.dismiss();
+                };
+            }
+        })();
+
+    </script>
+}
+
+
+
