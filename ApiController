@@ -13,7 +13,7 @@ using System.Web.Http;
 namespace Datalus.Web.Controllers.Api
 {
     [RoutePrefix("api/educations")]
-    public class EducationsApiController: BaseApiController
+    public class EducationsApiController: ApiController
     {
         [Route, HttpPost]
         public HttpResponseMessage Add(EducationsAddRequest model)
