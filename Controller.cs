@@ -9,7 +9,7 @@ using System.Web.Mvc;
 namespace Datalus.Web.Controllers
 {
     [RoutePrefix("Educations")]
-    public class EducationsController : BaseController
+    public class EducationsController : Controller
     {
         [Route("{userProfileId:int}/Create")]
         [Route("{userProfileId:int}/{id:int}/edit")]
